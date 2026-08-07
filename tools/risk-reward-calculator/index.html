@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Risk/Reward Calculator — MyForexKit</title>
+<meta name="description" content="Calculate your risk-to-reward ratio from entry, stop loss and take profit levels.">
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../css/styles.css">
+</head>
+<body>
+<div id="mfk-header"></div>
+
+<section class="tool-page-hero">
+  <div class="container">
+    <p class="breadcrumb"><a href="../../index.html">Home</a> / <a href="../index.html">Tools</a> / Risk/Reward Calculator</p>
+    <span class="eyebrow">Trade planning</span>
+    <h1>Risk/Reward Calculator</h1>
+    <p>Check your risk-to-reward ratio before you enter — for both Buy and Sell setups.</p>
+  </div>
+</section>
+
+<section>
+  <div class="container tool-layout">
+    <div class="tool-card-panel">
+      <h3>Your setup</h3>
+      <form id="calc-form" novalidate>
+        <div class="direction-toggle">
+          <button type="button" class="active buy" data-dir="buy" id="btn-buy">Buy</button>
+          <button type="button" data-dir="sell" id="btn-sell">Sell</button>
+        </div>
+        <div class="field">
+          <label for="entry">Entry price</label>
+          <input type="number" id="entry" inputmode="decimal" value="1.1000" step="any">
+          <div class="field-error" id="err-entry"></div>
+        </div>
+        <div class="field">
+          <label for="stop">Stop loss</label>
+          <input type="number" id="stop" inputmode="decimal" value="1.0950" step="any">
+          <div class="field-error" id="err-stop"></div>
+        </div>
+        <div class="field">
+          <label for="takeProfit">Take profit</label>
+          <input type="number" id="takeProfit" inputmode="decimal" value="1.1100" step="any">
+          <div class="field-error" id="err-takeProfit"></div>
+        </div>
+        <div class="tool-actions">
+          <button type="button" class="btn-reset" id="reset-btn">Reset</button>
+          <button type="submit" class="btn-calc">Calculate</button>
+        </div>
+      </form>
+    </div>
+
+    <div class="results-panel">
+      <h3>Result</h3>
+      <div id="results-body">
+        <p class="result-empty">Enter entry, stop and target to see your ratio.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div id="mfk-footer"></div>
+<script src="../../js/calculations.js"></script>
+<script src="../../js/components.js"></script>
+<script>
+MFKComponents.mount("../../");
+
+let direction = 'buy';
+const btnBuy = document.getElementById('btn-buy');
+const btnSell = document.getElementById('btn-sell');
+btnBuy.addEventListener('click', ()=>{ direction='buy'; btnBuy.classList.add('active'); btnSell.classList.remove('active'); });
+btnSell.addEventListener('click', ()=>{ direction='sell'; btnSell.classList.add('active'); btnBuy.classList.remove('active'); });
+
+const form = document.getElementById('calc-form');
+const resultsBody = document.getElementById('results-body');
+
+function clearErrors(){
+  document.querySelectorAll('.field-error').forEach(e=>{e.textContent='';e.classList.remove('show');});
+  document.querySelectorAll('.field').forEach(f=>f.classList.remove('invalid'));
+}
+function showFieldError(id, msg){
+  const el = document.getElementById('err-'+id);
+  if(el){ el.textContent = msg; el.classList.add('show'); }
+  document.getElementById(id).closest('.field').classList.add('invalid');
+}
+
+form.addEventListener('submit', function(e){
+  e.preventDefault();
+  clearErrors();
+  const entry = MFK.toNumberOrNull(document.getElementById('entry').value);
+  const stop = MFK.toNumberOrNull(document.getElementById('stop').value);
+  const takeProfit = MFK.toNumberOrNull(document.getElementById('takeProfit').value);
+
+  let hasError = false;
+  if(entry===null){ showFieldError('entry','Enter a valid entry price.'); hasError=true; }
+  if(stop===null){ showFieldError('stop','Enter a valid stop loss.'); hasError=true; }
+  if(takeProfit===null){ showFieldError('takeProfit','Enter a valid take profit.'); hasError=true; }
+  if(hasError){ resultsBody.innerHTML = '<p class="result-empty">Fix the highlighted fields to see your result.</p>'; return; }
+
+  const result = MFK.computeRiskReward({ entry, stop, takeProfit, direction });
+  if(!result.ok){
+    resultsBody.innerHTML = `<p class="result-empty">${result.error}</p>`;
+    return;
+  }
+
+  resultsBody.innerHTML = `
+    <div class="result-highlight">
+      <div class="l">Risk : Reward</div>
+      <div class="v">${result.ratioLabel}</div>
+    </div>
+    <div class="result-row"><span class="l">Risk distance</span><span class="v">${result.riskDistance}</span></div>
+    <div class="result-row"><span class="l">Reward distance</span><span class="v">${result.rewardDistance}</span></div>
+    <div class="result-row"><span class="l">Direction</span><span class="v">${direction==='buy'?'Buy':'Sell'}</span></div>
+  `;
+});
+
+document.getElementById('reset-btn').addEventListener('click', function(){
+  direction = 'buy'; btnBuy.classList.add('active'); btnSell.classList.remove('active');
+  document.getElementById('entry').value = '1.1000';
+  document.getElementById('stop').value = '1.0950';
+  document.getElementById('takeProfit').value = '1.1100';
+  clearErrors();
+  resultsBody.innerHTML = '<p class="result-empty">Enter entry, stop and target to see your ratio.</p>';
+});
+</script>
+</body>
+</html>

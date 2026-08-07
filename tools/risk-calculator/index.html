@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Risk Calculator — MyForexKit</title>
+<meta name="description" content="Calculate the dollar amount you're risking per trade and your remaining account balance if the stop loss is hit.">
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../css/styles.css">
+</head>
+<body>
+<div id="mfk-header"></div>
+
+<section class="tool-page-hero">
+  <div class="container">
+    <p class="breadcrumb"><a href="../../index.html">Home</a> / <a href="../index.html">Tools</a> / Risk Calculator</p>
+    <span class="eyebrow">Risk management</span>
+    <h1>Risk Calculator</h1>
+    <p>See exactly how much you're risking in dollars, and what's left if the trade goes against you.</p>
+  </div>
+</section>
+
+<section>
+  <div class="container tool-layout">
+    <div class="tool-card-panel">
+      <h3>Your account</h3>
+      <form id="calc-form" novalidate>
+        <div class="field">
+          <label for="balance">Account balance</label>
+          <input type="number" id="balance" inputmode="decimal" value="10000" min="0" step="any">
+          <div class="field-error" id="err-balance"></div>
+        </div>
+        <div class="field">
+          <label for="riskPercent">Risk percentage</label>
+          <input type="number" id="riskPercent" inputmode="decimal" value="1" min="0" max="100" step="any">
+          <div class="quick-risk" id="quick-risk">
+            <button type="button" data-val="0.25">0.25%</button>
+            <button type="button" data-val="0.5">0.5%</button>
+            <button type="button" data-val="1" class="active">1%</button>
+            <button type="button" data-val="2">2%</button>
+          </div>
+          <div class="field-error" id="err-riskPercent"></div>
+        </div>
+        <div class="tool-actions">
+          <button type="button" class="btn-reset" id="reset-btn">Reset</button>
+          <button type="submit" class="btn-calc">Calculate</button>
+        </div>
+      </form>
+    </div>
+
+    <div class="results-panel">
+      <h3>Result</h3>
+      <div id="results-body">
+        <p class="result-empty">Enter your account details and press Calculate.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div id="mfk-footer"></div>
+<script src="../../js/calculations.js"></script>
+<script src="../../js/components.js"></script>
+<script>
+MFKComponents.mount("../../");
+
+const form = document.getElementById('calc-form');
+const resultsBody = document.getElementById('results-body');
+const riskInput = document.getElementById('riskPercent');
+
+document.querySelectorAll('#quick-risk button').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    document.querySelectorAll('#quick-risk button').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    riskInput.value = btn.dataset.val;
+  });
+});
+riskInput.addEventListener('input', ()=>{
+  document.querySelectorAll('#quick-risk button').forEach(b=>{
+    b.classList.toggle('active', b.dataset.val === riskInput.value);
+  });
+});
+
+function clearErrors(){
+  document.querySelectorAll('.field-error').forEach(e=>{e.textContent='';e.classList.remove('show');});
+  document.querySelectorAll('.field').forEach(f=>f.classList.remove('invalid'));
+}
+function showFieldError(id, msg){
+  const el = document.getElementById('err-'+id);
+  if(el){ el.textContent = msg; el.classList.add('show'); }
+  document.getElementById(id).closest('.field').classList.add('invalid');
+}
+function fmtMoney(n){
+  return new Intl.NumberFormat('en-US',{style:'currency',currency:'USD',maximumFractionDigits:2}).format(n);
+}
+
+form.addEventListener('submit', function(e){
+  e.preventDefault();
+  clearErrors();
+  const balance = MFK.toNumberOrNull(document.getElementById('balance').value);
+  const riskPercent = MFK.toNumberOrNull(riskInput.value);
+
+  let hasError = false;
+  if(balance===null || balance<=0){ showFieldError('balance','Enter a balance greater than 0.'); hasError=true; }
+  if(riskPercent===null || riskPercent<=0 || riskPercent>100){ showFieldError('riskPercent','Enter a risk % between 0 and 100.'); hasError=true; }
+  if(hasError){ resultsBody.innerHTML = '<p class="result-empty">Fix the highlighted fields to see your result.</p>'; return; }
+
+  const result = MFK.computeRisk({ accountBalance: balance, riskPercent });
+  if(!result.ok){ resultsBody.innerHTML = `<p class="result-empty">${result.error}</p>`; return; }
+
+  resultsBody.innerHTML = `
+    <div class="result-highlight">
+      <div class="l">Amount at risk</div>
+      <div class="v">${fmtMoney(result.riskAmount)}</div>
+    </div>
+    <div class="result-row"><span class="l">Balance if stopped out</span><span class="v">${fmtMoney(result.remainingBalance)}</span></div>
+    <div class="result-row"><span class="l">Percent remaining</span><span class="v">${result.remainingPercent}%</span></div>
+  `;
+});
+
+document.getElementById('reset-btn').addEventListener('click', function(){
+  document.getElementById('balance').value = '10000';
+  riskInput.value = '1';
+  document.querySelectorAll('#quick-risk button').forEach(b=>b.classList.toggle('active', b.dataset.val==='1'));
+  clearErrors();
+  resultsBody.innerHTML = '<p class="result-empty">Enter your account details and press Calculate.</p>';
+});
+</script>
+</body>
+</html>
