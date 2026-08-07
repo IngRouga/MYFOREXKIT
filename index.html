@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>MyForexKit — Smarter Tools for Forex Traders</title>
-<meta name="description" content="Calculate position size, manage risk, track global forex sessions and compare prop firms — free, no signup required.">
+<meta name="description" content="Calculate risk, size your trades, track global trading sessions and compare prop firms — free, no signup required.">
 <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/styles.css">
 </head>
@@ -13,34 +13,30 @@
 <div id="mfk-header"></div>
 
 <section class="hero">
-  <div class="container hero-split">
-    <div class="hero-copy">
-      <span class="eyebrow" data-i18n="hero_eyebrow">Independent trading toolkit</span>
-      <h1><span data-i18n="hero_h1_1">Smarter tools.</span><br><span class="accent" data-i18n="hero_h1_2">Better trading decisions.</span></h1>
-      <p data-i18n="hero_sub">Calculate position size, manage risk, track global forex sessions and compare prop firms from one simple toolkit.</p>
-      <div class="hero-ctas">
-        <a href="tools/index.html" class="btn btn-primary" data-i18n="hero_cta_primary">Explore Free Tools</a>
-        <a href="prop-firms/index.html" class="btn btn-secondary" data-i18n="hero_cta_secondary">Compare Prop Firms</a>
-      </div>
-      <p class="hero-trust"><span data-i18n="hero_trust">Free to use</span><span class="dot">•</span><span data-i18n="hero_trust_2">No signup required</span></p>
+  <div class="container hero-inner">
+    <span class="eyebrow" data-i18n="hero_eyebrow">Independent trading toolkit</span>
+    <h1><span data-i18n="hero_h1_1">Smarter tools</span> <span class="accent" data-i18n="hero_h1_2">for forex traders.</span></h1>
+    <p data-i18n="hero_sub">Calculate risk, size your trades, track global trading sessions and compare prop firms — all in one place.</p>
+    <div class="hero-ctas">
+      <a href="tools/index.html" class="btn btn-primary" data-i18n="hero_cta_primary">Explore Tools</a>
+      <a href="prop-firms/index.html" class="btn btn-secondary" data-i18n="hero_cta_secondary">Compare Prop Firms</a>
     </div>
 
-    <div class="product-preview">
-      <div class="product-preview-bar"><span></span><span></span><span></span></div>
-      <div class="product-preview-inner">
-        <div class="pp-label" data-i18n="preview_label">Lot size calculator</div>
-        <div class="pp-grid">
-          <div class="pp-field"><div class="l" data-i18n="field_balance">Account balance</div><div class="v">$100,000</div></div>
-          <div class="pp-field"><div class="l" data-i18n="field_risk">Risk</div><div class="v">0.5%</div></div>
-          <div class="pp-field"><div class="l" data-i18n="field_stoploss">Stop loss</div><div class="v">25 pips</div></div>
-          <div class="pp-field"><div class="l" data-i18n="field_pair">Pair</div><div class="v">EUR/USD</div></div>
-        </div>
-        <div class="pp-arrow"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M12 4v16M6 14l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-        <div class="pp-result">
-          <div class="l" data-i18n="preview_result_label">Calculated position size</div>
-          <div class="v" id="preview-result">—</div>
-          <div class="sub" id="preview-sub">—</div>
-        </div>
+    <div class="hero-preview">
+      <div class="preview-card">
+        <div class="pi"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M4 12h16M4 6h10M4 18h7" stroke="#fff" stroke-width="2" stroke-linecap="round"/></svg></div>
+        <div class="pl" data-i18n="lot_title">Lot Size Calculator</div>
+        <div class="pv" data-i18n="preview_lot">Position size</div>
+      </div>
+      <div class="preview-card">
+        <div class="pi"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="8" stroke="#fff" stroke-width="2"/><path d="M12 8v4l3 3" stroke="#fff" stroke-width="2" stroke-linecap="round"/></svg></div>
+        <div class="pl" data-i18n="preview_risk">Risk per trade</div>
+        <div class="pv pos">0.75%</div>
+      </div>
+      <div class="preview-card">
+        <div class="pi"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="#fff" stroke-width="2"/><path d="M12 7v5l4 2" stroke="#fff" stroke-width="2" stroke-linecap="round"/></svg></div>
+        <div class="pl" data-i18n="sessions_title">Trading Sessions</div>
+        <div class="pv" data-i18n="preview_session">London · NY overlap</div>
       </div>
     </div>
   </div>
@@ -49,78 +45,28 @@
 <section class="reveal">
   <div class="container">
     <div class="section-head">
-      <span class="eyebrow" data-i18n="tools_eyebrow">Core tools</span>
-      <h2 data-i18n="tools_h2">Everything you need to manage your trades.</h2>
-      <p data-i18n="tools_sub">Three essential tools. No unnecessary complexity.</p>
+      <span class="eyebrow" data-i18n="tools_eyebrow">Free tools</span>
+      <h2 data-i18n="tools_h2">Essential tools. Nothing you don't need.</h2>
     </div>
     <div class="tools-grid-3">
-
-      <div class="tool-feature-card primary">
+      <div class="tool-feature-card">
         <div class="icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M4 12h16M4 6h10M4 18h7" stroke="#fff" stroke-width="2" stroke-linecap="round"/></svg></div>
         <h3 data-i18n="lot_title">Lot Size Calculator</h3>
         <p data-i18n="lot_desc">Calculate position size based on account balance, risk and stop loss.</p>
-        <div class="mini-fields">
-          <div class="mini-field"><div class="l" data-i18n="field_balance">Account</div><div class="v">$10,000</div></div>
-          <div class="mini-field"><div class="l" data-i18n="field_pair">Pair</div><div class="v">EUR/USD</div></div>
-          <div class="mini-field"><div class="l" data-i18n="field_risk">Risk</div><div class="v">1%</div></div>
-          <div class="mini-field"><div class="l" data-i18n="field_stoploss">Stop loss</div><div class="v">25 pips</div></div>
-        </div>
-        <div class="mini-output"><span class="l" data-i18n="result_lotsize">Position size</span><span class="v" id="card-lot-result">—</span></div>
-        <a href="tools/lot-size-calculator/index.html" class="btn btn-primary" data-i18n="lot_cta">Calculate Lot Size →</a>
+        <a href="tools/lot-size-calculator/index.html" class="btn btn-secondary" data-i18n="lot_cta">Calculate Lot Size</a>
       </div>
-
       <div class="tool-feature-card">
         <div class="icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="8" stroke="#fff" stroke-width="2"/><path d="M12 8v4l3 3" stroke="#fff" stroke-width="2" stroke-linecap="round"/></svg></div>
         <h3 data-i18n="risk_title">Risk Calculator</h3>
         <p data-i18n="risk_desc">Know exactly how much money you're risking before entering a trade.</p>
-        <div class="mini-fields">
-          <div class="mini-field"><div class="l" data-i18n="field_balance">Account balance</div><div class="v">$50,000</div></div>
-          <div class="mini-field"><div class="l" data-i18n="field_risk">Risk</div><div class="v">0.5%</div></div>
-        </div>
-        <div class="mini-output"><span class="l" data-i18n="risk_result_atrisk">Amount at risk</span><span class="v" id="card-risk-result">—</span></div>
-        <a href="tools/risk-calculator/index.html" class="btn btn-secondary" data-i18n="risk_cta">Calculate Risk →</a>
+        <a href="tools/risk-calculator/index.html" class="btn btn-secondary" data-i18n="risk_cta">Calculate Risk</a>
       </div>
-
       <div class="tool-feature-card">
         <div class="icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="#fff" stroke-width="2"/><path d="M12 7v5l4 2" stroke="#fff" stroke-width="2" stroke-linecap="round"/></svg></div>
         <h3 data-i18n="sessions_title">Trading Sessions</h3>
         <p data-i18n="sessions_desc">See which major forex sessions are open in real time.</p>
-        <div class="session-mini-list" id="session-mini-list"></div>
-        <div class="session-overlap-mini" id="session-overlap-mini">🟢 <span data-i18n="timeline_overlap">London – New York overlap</span></div>
-        <a href="tools/trading-sessions/index.html" class="btn btn-secondary" data-i18n="sessions_cta">View Live Sessions →</a>
+        <a href="tools/trading-sessions/index.html" class="btn btn-secondary" data-i18n="sessions_cta">View Sessions</a>
       </div>
-
-    </div>
-  </div>
-</section>
-
-<section class="reveal">
-  <div class="container">
-    <div class="section-head">
-      <span class="eyebrow" data-i18n="propfirms_eyebrow">Prop firms</span>
-      <h2 data-i18n="propfirms_home_h2">Find the right prop firm.</h2>
-      <p data-i18n="propfirms_home_desc">Compare the rules that matter before purchasing a challenge.</p>
-    </div>
-    <div style="text-align:center;">
-      <a href="prop-firms/index.html" class="btn btn-primary" data-i18n="propfirms_home_cta">Compare Prop Firms →</a>
-    </div>
-  </div>
-</section>
-
-<section class="reveal" id="community">
-  <div class="container">
-    <div class="community-wrap">
-      <div style="display:flex; align-items:center; gap:24px; flex-wrap:wrap;">
-        <div class="community-icon-wrap">
-          <svg width="30" height="30" viewBox="0 0 24 24" fill="#fff"><path d="M21.9 4.4c.3-1.1-.7-1.9-1.7-1.5L2.6 10.1c-1 .4-1 1.9.1 2.2l4.4 1.4 1.7 5.4c.2.7 1.1.9 1.6.4l2.5-2.4 4.6 3.4c.8.6 1.9.2 2.1-.8l3.3-15.3zM8 13.2l9.6-6-7.6 7.1-.4 3.3-1.6-4.4z"/></svg>
-        </div>
-        <div class="community-copy">
-          <span class="eyebrow">Community</span>
-          <h2 data-i18n="community_h2">Trade smarter. Together.</h2>
-          <p data-i18n="community_text">Join the MyForexKit community to discuss trading, risk management, prop firms and new MyForexKit tools with other traders.</p>
-        </div>
-      </div>
-      <a href="https://t.me/myforexkit" target="_blank" rel="noopener" class="btn btn-tg" data-i18n="community_cta">Join the Community →</a>
     </div>
   </div>
 </section>
@@ -128,10 +74,10 @@
 <section class="reveal">
   <div class="container">
     <div class="final-cta">
-      <h2 data-i18n="final_h2">Your trading toolkit starts here.</h2>
+      <h2 data-i18n="final_h2">Trade with better tools.</h2>
       <div class="final-cta-btns">
-        <a href="tools/index.html" class="btn btn-white" data-i18n="hero_cta_primary">Explore Free Tools</a>
-        <a href="https://t.me/myforexkit" target="_blank" rel="noopener" class="btn btn-ghost" data-i18n="final_cta_2">Join the Community</a>
+        <a href="tools/index.html" class="btn btn-white" data-i18n="hero_cta_primary">Explore Tools</a>
+        <a href="prop-firms/index.html" class="btn btn-ghost" data-i18n="hero_cta_secondary">Compare Prop Firms</a>
       </div>
     </div>
   </div>
@@ -139,55 +85,11 @@
 
 <div id="mfk-footer"></div>
 
-<script src="js/calculations.js"></script>
 <script src="js/i18n.js"></script>
 <script src="js/auth.js"></script>
 <script src="js/components.js"></script>
 <script>
   MFKComponents.mount("./");
-
-  // Hero product preview — computed by the real calculator logic, not a fake number.
-  (function(){
-    const pipInfo = MFK.pipValuePerLotInAccountCurrency("EUR/USD", "USD", null);
-    const result = MFK.computeLotSize({ accountBalance: 100000, riskPercent: 0.5, stopLossPips: 25, pipValuePerLot: pipInfo.value });
-    if(result.ok){
-      document.getElementById('preview-result').textContent = result.positionSizeLots + ' lots';
-      document.getElementById('preview-sub').textContent = new Intl.NumberFormat('en-US',{style:'currency',currency:'USD',maximumFractionDigits:0}).format(result.riskAmount) + ' at risk · ' + result.units.toLocaleString() + ' units';
-    }
-  })();
-
-  // Card mini-results — also computed from real logic.
-  (function(){
-    const pipInfo = MFK.pipValuePerLotInAccountCurrency("EUR/USD", "USD", null);
-    const lotResult = MFK.computeLotSize({ accountBalance: 10000, riskPercent: 1, stopLossPips: 25, pipValuePerLot: pipInfo.value });
-    if(lotResult.ok) document.getElementById('card-lot-result').textContent = lotResult.positionSizeLots + ' lots';
-
-    const riskResult = MFK.computeRisk({ accountBalance: 50000, riskPercent: 0.5 });
-    if(riskResult.ok) document.getElementById('card-risk-result').textContent = new Intl.NumberFormat('en-US',{style:'currency',currency:'USD',maximumFractionDigits:0}).format(riskResult.riskAmount);
-  })();
-
-  // Live session mini-status — real timezone logic, not faked.
-  function renderSessionMini(){
-    const sessions = MFK.computeSessions(new Date());
-    const lang = window.MFKi18n ? window.MFKi18n.getLang() : 'en';
-    const t = window.MFKi18n ? window.MFKi18n.t : (k)=>k;
-    const list = document.getElementById('session-mini-list');
-    list.innerHTML = sessions.map(s=>{
-      const name = lang==='fr' ? s.nameFr : s.name;
-      return `<div class="session-mini-row">
-        <span class="name"><span class="dot ${s.isOpen?'on':'off'}"></span>${name}</span>
-        <span class="stat ${s.isOpen?'on':'off'}">${s.isOpen ? t('sessions_open') : t('sessions_closed')}</span>
-      </div>`;
-    }).join('');
-    const london = sessions.find(s=>s.key==='london');
-    const ny = sessions.find(s=>s.key==='newyork');
-    const overlapOpen = london.isOpen && ny.isOpen;
-    document.getElementById('session-overlap-mini').style.display = overlapOpen ? 'flex' : 'none';
-  }
-  renderSessionMini();
-  setInterval(renderSessionMini, 30000);
-  document.querySelectorAll('.lang-toggle button, .footer-lang button').forEach(b=>b.addEventListener('click', ()=> setTimeout(renderSessionMini, 0)));
-
   const io = new IntersectionObserver((entries)=>{
     entries.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target);} });
   },{threshold:0.12});
