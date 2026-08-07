@@ -23,6 +23,7 @@
           <nav class="nav-links">
             <a href="${root}tools/index.html" data-i18n="nav_tools">Tools</a>
             <a href="${root}prop-firms/index.html" data-i18n="nav_propfirms">Prop Firms</a>
+            <a href="${root}index.html#community" data-i18n="nav_community">Community</a>
           </nav>
           <div class="nav-right">
             <div class="lang-toggle">
@@ -39,6 +40,7 @@
         <div class="mobile-menu container">
           <a href="${root}tools/index.html" data-i18n="nav_tools">Tools</a>
           <a href="${root}prop-firms/index.html" data-i18n="nav_propfirms">Prop Firms</a>
+          <a href="${root}index.html#community" data-i18n="nav_community">Community</a>
           <div class="lang-toggle" style="margin-top:14px;">
             <button type="button" data-lang="en">EN</button>
             <button type="button" data-lang="fr">FR</button>
@@ -71,8 +73,8 @@
             <div class="footer-links">
               <a href="${root}tools/index.html" data-i18n="nav_tools">Tools</a>
               <a href="${root}prop-firms/index.html" data-i18n="nav_propfirms">Prop Firms</a>
+              <a href="${root}index.html#community" data-i18n="nav_community">Community</a>
               <a href="${root}index.html" data-i18n="footer_about">About</a>
-              <a href="${root}index.html" data-i18n="footer_contact">Contact</a>
               <a href="${root}index.html" data-i18n="footer_privacy">Privacy</a>
               <a href="${root}index.html" data-i18n="footer_terms">Terms</a>
               <a href="${root}index.html" data-i18n="footer_affiliate">Affiliate Disclosure</a>
@@ -80,12 +82,21 @@
             </div>
           </div>
           <div class="footer-bottom">
-            <p>© 2026 MyForexKit</p>
-            <p>myforexkit.com</p>
+            <p>© 2026 MyForexKit · myforexkit.com</p>
+            <a href="https://t.me/myforexkit" target="_blank" rel="noopener" class="footer-tg">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M21.9 4.4c.3-1.1-.7-1.9-1.7-1.5L2.6 10.1c-1 .4-1 1.9.1 2.2l4.4 1.4 1.7 5.4c.2.7 1.1.9 1.6.4l2.5-2.4 4.6 3.4c.8.6 1.9.2 2.1-.8l3.3-15.3zM8 13.2l9.6-6-7.6 7.1-.4 3.3-1.6-4.4z"/></svg>
+              Telegram
+            </a>
+            <div class="footer-lang">
+              <button type="button" data-lang="en">EN</button> | <button type="button" data-lang="fr">FR</button>
+            </div>
           </div>
           <p class="footer-disclaimer" data-i18n="footer_disclaimer">MyForexKit provides informational tools and does not provide investment advice.</p>
         </div>
       </footer>`;
+      document.querySelectorAll(".footer-lang button").forEach((btn) => {
+        btn.addEventListener("click", () => window.MFKi18n && window.MFKi18n.setLang(btn.dataset.lang));
+      });
     }
 
     if (window.MFKi18n) window.MFKi18n.applyTranslations();
