@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sign In — MyForexKit</title>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../css/styles.css">
+</head>
+<body>
+<div id="mfk-header"></div>
+
+<div class="auth-wrap">
+  <div class="auth-card">
+    <h1 data-i18n="auth_signin_title">Sign in</h1>
+    <p class="sub" data-i18n="auth_signin_sub">Access your saved preferences and favorites.</p>
+    <p class="auth-note" data-i18n="auth_note">Accounts are optional — every calculator and the sessions dashboard work without signing in.</p>
+
+    <form id="signin-form" novalidate>
+      <div class="field">
+        <label for="email" data-i18n="field_email">Email</label>
+        <input type="email" id="email" required>
+        <div class="field-error" id="err-email"></div>
+      </div>
+      <div class="field">
+        <label for="password" data-i18n="field_password">Password</label>
+        <input type="password" id="password" required>
+        <div class="field-error" id="err-password"></div>
+      </div>
+      <button type="submit" class="btn-calc" data-i18n="auth_signin_btn">Sign In</button>
+    </form>
+
+    <div class="auth-links">
+      <a href="../forgot-password/index.html" data-i18n="auth_forgot_link">Forgot password?</a>
+    </div>
+    <div class="auth-divider"></div>
+    <div class="auth-links">
+      <span data-i18n="auth_no_account">Don't have an account?</span>
+      <a href="../create-account/index.html" data-i18n="nav_create">Create Account</a>
+    </div>
+  </div>
+</div>
+
+<div id="mfk-footer"></div>
+<script src="../../js/i18n.js"></script>
+<script src="../../js/auth.js"></script>
+<script src="../../js/components.js"></script>
+<script>
+MFKComponents.mount("../../");
+const t = (k)=> (window.MFKi18n ? window.MFKi18n.t(k) : k);
+
+document.getElementById('signin-form').addEventListener('submit', function(e){
+  e.preventDefault();
+  document.querySelectorAll('.field-error').forEach(el=>{el.textContent='';el.classList.remove('show');});
+  document.querySelectorAll('.field').forEach(f=>f.classList.remove('invalid'));
+
+  const email = document.getElementById('email').value.trim();
+  const password = document.getElementById('password').value;
+  let hasError = false;
+  if(!email){ document.getElementById('err-email').textContent = t('err_fixfields'); document.getElementById('err-email').classList.add('show'); document.getElementById('email').closest('.field').classList.add('invalid'); hasError=true; }
+  if(!password){ document.getElementById('err-password').textContent = t('err_fixfields'); document.getElementById('err-password').classList.add('show'); document.getElementById('password').closest('.field').classList.add('invalid'); hasError=true; }
+  if(hasError) return;
+
+  const result = MFKAuth.signIn({ email, password });
+  if(!result.ok){
+    document.getElementById('err-password').textContent = 'Invalid email or password.';
+    document.getElementById('err-password').classList.add('show');
+    document.getElementById('password').closest('.field').classList.add('invalid');
+    return;
+  }
+  window.location.href = '../profile/index.html';
+});
+</script>
+</body>
+</html>

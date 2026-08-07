@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MyForexKit — Smarter Tools for Forex Traders</title>
+<meta name="description" content="Calculate risk, size your trades, track global trading sessions and compare prop firms — free, no signup required.">
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+<div id="mfk-header"></div>
+
+<section class="hero">
+  <div class="container hero-inner">
+    <span class="eyebrow" data-i18n="hero_eyebrow">Independent trading toolkit</span>
+    <h1><span data-i18n="hero_h1_1">Smarter tools</span> <span class="accent" data-i18n="hero_h1_2">for forex traders.</span></h1>
+    <p data-i18n="hero_sub">Calculate risk, size your trades, track global trading sessions and compare prop firms — all in one place.</p>
+    <div class="hero-ctas">
+      <a href="tools/index.html" class="btn btn-primary" data-i18n="hero_cta_primary">Explore Tools</a>
+      <a href="prop-firms/index.html" class="btn btn-secondary" data-i18n="hero_cta_secondary">Compare Prop Firms</a>
+    </div>
+
+    <div class="hero-preview">
+      <div class="preview-card">
+        <div class="pi"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M4 12h16M4 6h10M4 18h7" stroke="#fff" stroke-width="2" stroke-linecap="round"/></svg></div>
+        <div class="pl" data-i18n="lot_title">Lot Size Calculator</div>
+        <div class="pv" data-i18n="preview_lot">Position size</div>
+      </div>
+      <div class="preview-card">
+        <div class="pi"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="8" stroke="#fff" stroke-width="2"/><path d="M12 8v4l3 3" stroke="#fff" stroke-width="2" stroke-linecap="round"/></svg></div>
+        <div class="pl" data-i18n="preview_risk">Risk per trade</div>
+        <div class="pv pos">0.75%</div>
+      </div>
+      <div class="preview-card">
+        <div class="pi"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="#fff" stroke-width="2"/><path d="M12 7v5l4 2" stroke="#fff" stroke-width="2" stroke-linecap="round"/></svg></div>
+        <div class="pl" data-i18n="sessions_title">Trading Sessions</div>
+        <div class="pv" data-i18n="preview_session">London · NY overlap</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="reveal">
+  <div class="container">
+    <div class="section-head">
+      <span class="eyebrow" data-i18n="tools_eyebrow">Free tools</span>
+      <h2 data-i18n="tools_h2">Essential tools. Nothing you don't need.</h2>
+    </div>
+    <div class="tools-grid-3">
+      <div class="tool-feature-card">
+        <div class="icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M4 12h16M4 6h10M4 18h7" stroke="#fff" stroke-width="2" stroke-linecap="round"/></svg></div>
+        <h3 data-i18n="lot_title">Lot Size Calculator</h3>
+        <p data-i18n="lot_desc">Calculate position size based on account balance, risk and stop loss.</p>
+        <a href="tools/lot-size-calculator/index.html" class="btn btn-secondary" data-i18n="lot_cta">Calculate Lot Size</a>
+      </div>
+      <div class="tool-feature-card">
+        <div class="icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="8" stroke="#fff" stroke-width="2"/><path d="M12 8v4l3 3" stroke="#fff" stroke-width="2" stroke-linecap="round"/></svg></div>
+        <h3 data-i18n="risk_title">Risk Calculator</h3>
+        <p data-i18n="risk_desc">Know exactly how much money you're risking before entering a trade.</p>
+        <a href="tools/risk-calculator/index.html" class="btn btn-secondary" data-i18n="risk_cta">Calculate Risk</a>
+      </div>
+      <div class="tool-feature-card">
+        <div class="icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="#fff" stroke-width="2"/><path d="M12 7v5l4 2" stroke="#fff" stroke-width="2" stroke-linecap="round"/></svg></div>
+        <h3 data-i18n="sessions_title">Trading Sessions</h3>
+        <p data-i18n="sessions_desc">See which major forex sessions are open in real time.</p>
+        <a href="tools/trading-sessions/index.html" class="btn btn-secondary" data-i18n="sessions_cta">View Sessions</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="reveal">
+  <div class="container">
+    <div class="final-cta">
+      <h2 data-i18n="final_h2">Trade with better tools.</h2>
+      <div class="final-cta-btns">
+        <a href="tools/index.html" class="btn btn-white" data-i18n="hero_cta_primary">Explore Tools</a>
+        <a href="prop-firms/index.html" class="btn btn-ghost" data-i18n="hero_cta_secondary">Compare Prop Firms</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div id="mfk-footer"></div>
+
+<script src="js/i18n.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/components.js"></script>
+<script>
+  MFKComponents.mount("./");
+  const io = new IntersectionObserver((entries)=>{
+    entries.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target);} });
+  },{threshold:0.12});
+  document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+</script>
+</body>
+</html>

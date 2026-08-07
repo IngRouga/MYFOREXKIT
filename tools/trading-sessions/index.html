@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Trading Sessions — MyForexKit</title>
+<meta name="description" content="Live forex trading session times for Sydney, Tokyo, London and New York, shown in your local time with session overlaps.">
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../css/styles.css">
+</head>
+<body>
+<div id="mfk-header"></div>
+
+<section class="tool-page-hero">
+  <div class="container">
+    <p class="breadcrumb"><a href="../../index.html" data-i18n="breadcrumb_home">Home</a> / <a href="../index.html" data-i18n="breadcrumb_tools">Tools</a> / <span data-i18n="sessions_title">Trading Sessions</span></p>
+    <h1 data-i18n="sessions_title">Trading Sessions</h1>
+    <p data-i18n="sessions_desc">See which major forex sessions are open in real time.</p>
+  </div>
+</section>
+
+<section>
+  <div class="container" style="padding:44px 0 96px;">
+    <div class="sessions-top-clock">
+      <div class="clock-chip"><div class="l" data-i18n="sessions_your_time">Your local time</div><div class="v" id="local-clock">—</div></div>
+      <div class="clock-chip"><div class="l" data-i18n="sessions_utc">UTC time</div><div class="v" id="utc-clock">—</div></div>
+    </div>
+
+    <div class="sessions-grid" id="sessions-grid"></div>
+
+    <div class="timeline-wrap">
+      <div class="timeline-title" data-i18n="timeline_title">Session overlap timeline</div>
+      <div class="timeline-track" id="timeline-track"></div>
+      <span class="overlap-badge">🟢 <span data-i18n="timeline_overlap">London – New York overlap</span></span>
+    </div>
+  </div>
+</section>
+
+<div id="mfk-footer"></div>
+<script src="../../js/calculations.js"></script>
+<script src="../../js/i18n.js"></script>
+<script src="../../js/auth.js"></script>
+<script src="../../js/components.js"></script>
+<script>
+MFKComponents.mount("../../");
+
+const grid = document.getElementById('sessions-grid');
+const localClock = document.getElementById('local-clock');
+const utcClock = document.getElementById('utc-clock');
+const track = document.getElementById('timeline-track');
+const localTz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+const t = (k)=> (window.MFKi18n ? window.MFKi18n.t(k) : k);
+const lang = ()=> (window.MFKi18n ? window.MFKi18n.getLang() : 'en');
+
+function fmtLocalTime(now, timeZone){
+  return new Intl.DateTimeFormat('en-US', { timeZone, hour:'2-digit', minute:'2-digit', hour12:true }).format(now);
+}
+function fmtDuration(mins){
+  const h = Math.floor(mins/60);
+  const m = mins % 60;
+  if(h===0) return `${m}m`;
+  return `${h}h ${m}m`;
+}
+
+function renderClocks(now){
+  localClock.textContent = fmtLocalTime(now, localTz) + ` (${localTz})`;
+  utcClock.textContent = new Intl.DateTimeFormat('en-US', { timeZone:'UTC', hour:'2-digit', minute:'2-digit', hour12:false }).format(now) + ' UTC';
+}
+
+function renderSessionCards(sessions){
+  grid.innerHTML = sessions.map(s=>{
+    const name = lang()==='fr' ? s.nameFr : s.name;
+    return `
+      <div class="session-card ${s.isOpen ? 'open':''}">
+        <div class="session-top">
+          <div>
+            <div class="session-name">${name}</div>
+            <div class="session-tz">${s.timeZone}</div>
+          </div>
+          <span class="session-status ${s.isOpen?'open-s':'closed-s'}">${s.isOpen? t('sessions_open') : t('sessions_closed')}</span>
+        </div>
+        <div class="session-times">${t('sessions_hours')}: ${String(s.openHour).padStart(2,'0')}:00 – ${String(s.closeHour).padStart(2,'0')}:00</div>
+        <div class="session-countdown">${(s.nextEvent==='close' ? t('sessions_closes_in') : t('sessions_opens_in'))} ${fmtDuration(s.minutesToNextEvent)}</div>
+      </div>
+    `;
+  }).join('');
+}
+
+// Timeline: shows each session's open/close window on a 24h UTC-relative track,
+// scaled to hours in the viewer's local day for intuitive reading.
+function renderTimeline(sessions, now){
+  const rowLabels = sessions.map(s => lang()==='fr' ? s.nameFr : s.name);
+  const hoursMarks = [0,3,6,9,12,15,18,21,24];
+
+  // Convert each session's open/close (in its own local hour) into UTC hour-of-day.
+  function localHourToUTCOffsetHours(timeZone, refDate){
+    const local = MFK.zonedHourMinute(refDate, timeZone);
+    const utc = MFK.zonedHourMinute(refDate, 'UTC');
+    let diff = (local.hour + local.minute/60) - (utc.hour + utc.minute/60);
+    if (diff > 12) diff -= 24;
+    if (diff < -12) diff += 24;
+    return diff; // hours ahead of UTC
+  }
+
+  const rows = sessions.map(s=>{
+    const offset = localHourToUTCOffsetHours(s.timeZone, now);
+    let startUTC = (s.openHour - offset + 24) % 24;
+    let endUTC = (s.closeHour - offset + 24) % 24;
+    if (endUTC <= startUTC) endUTC += 24; // wraps past midnight UTC
+    return { name: lang()==='fr' ? s.nameFr : s.name, startUTC, endUTC };
+  });
+
+  const nowUTC = MFK.zonedHourMinute(now, 'UTC');
+  const nowPct = ((nowUTC.hour + nowUTC.minute/60) / 24) * 100;
+
+  const hoursHtml = hoursMarks.map(h=>`<span>${String(h).padStart(2,'0')}:00</span>`).join('');
+  const rowsHtml = rows.map(r=>{
+    const segments = [];
+    // primary segment
+    const s1 = Math.min(r.startUTC, 24);
+    const e1 = Math.min(r.endUTC, 24);
+    segments.push({left: (s1/24)*100, width: ((e1-s1)/24)*100});
+    // wrapped segment if endUTC > 24
+    if (r.endUTC > 24){
+      const e2 = r.endUTC - 24;
+      segments.push({left:0, width:(e2/24)*100});
+    }
+    const bars = segments.map(seg=>`<div class="timeline-bar" style="left:${seg.left}%; width:${seg.width}%;"></div>`).join('');
+    return `<div class="timeline-row"><span class="row-label">${r.name}</span>${bars}</div>`;
+  }).join('');
+
+  track.innerHTML = `
+    <div class="timeline-hours">${hoursHtml}</div>
+    <div class="timeline-rows">${rowsHtml}</div>
+    <div class="timeline-now" style="left:${nowPct}%"></div>
+  `;
+}
+
+function render(){
+  const now = new Date();
+  renderClocks(now);
+  const sessions = MFK.computeSessions(now);
+  renderSessionCards(sessions);
+  renderTimeline(sessions, now);
+}
+
+render();
+setInterval(render, 30000);
+window.addEventListener('mfk:langchange', render);
+document.querySelectorAll('.lang-toggle button').forEach(b=>b.addEventListener('click', ()=> setTimeout(render, 0)));
+</script>
+</body>
+</html>

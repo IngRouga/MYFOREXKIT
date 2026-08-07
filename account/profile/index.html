@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>My Account — MyForexKit</title>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../css/styles.css">
+</head>
+<body>
+<div id="mfk-header"></div>
+
+<div class="container profile-grid" id="profile-root" style="display:none;">
+  <div class="profile-nav">
+    <button type="button" class="active" data-tab="prefs" data-i18n="profile_prefs">Preferences</button>
+    <button type="button" data-tab="favorites" data-i18n="profile_favorites">Favorites</button>
+    <button type="button" data-tab="settings" data-i18n="profile_settings">Account Settings</button>
+    <button type="button" id="signout-btn" style="color:#DC2626; margin-top:10px;">Sign Out</button>
+  </div>
+
+  <div>
+    <div class="profile-panel active" data-panel="prefs">
+      <h3 data-i18n="profile_prefs">Preferences</h3>
+      <div class="field">
+        <label for="pref-currency" data-i18n="profile_default_currency">Default account currency</label>
+        <select id="pref-currency">
+          <option value="USD">USD</option><option value="EUR">EUR</option><option value="GBP">GBP</option>
+          <option value="JPY">JPY</option><option value="CHF">CHF</option><option value="CAD">CAD</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="pref-risk" data-i18n="profile_default_risk">Default risk %</label>
+        <input type="number" id="pref-risk" step="any" min="0" max="100">
+      </div>
+      <button type="button" class="btn-calc" id="save-prefs" style="width:auto;" data-i18n="profile_save">Save changes</button>
+    </div>
+
+    <div class="profile-panel" data-panel="favorites">
+      <h3 data-i18n="profile_favorites">Favorites</h3>
+      <p style="font-size:13.5px; color:var(--slate); margin-bottom:14px;" data-i18n="profile_fav_pairs">Favorite currency pairs</p>
+      <div id="fav-pairs-list"></div>
+      <select id="add-fav-pair" style="margin-top:14px;"></select>
+    </div>
+
+    <div class="profile-panel" data-panel="settings">
+      <h3 data-i18n="profile_settings">Account Settings</h3>
+      <div class="field">
+        <label data-i18n="field_name">Full name</label>
+        <input type="text" id="settings-name" disabled>
+      </div>
+      <div class="field">
+        <label data-i18n="field_email">Email</label>
+        <input type="text" id="settings-email" disabled>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="not-signed-in" class="auth-wrap">
+  <div class="auth-card" style="text-align:center;">
+    <h1 data-i18n="auth_signin_title">Sign in</h1>
+    <p class="sub" data-i18n="auth_signin_sub">Access your saved preferences and favorites.</p>
+    <a href="../sign-in/index.html" class="btn btn-primary" style="width:100%; justify-content:center;" data-i18n="auth_signin_btn">Sign In</a>
+  </div>
+</div>
+
+<div id="mfk-footer"></div>
+<script src="../../js/calculations.js"></script>
+<script src="../../js/i18n.js"></script>
+<script src="../../js/auth.js"></script>
+<script src="../../js/components.js"></script>
+<script>
+MFKComponents.mount("../../");
+const t = (k)=> (window.MFKi18n ? window.MFKi18n.t(k) : k);
+
+const user = MFKAuth.currentUser();
+if(!user){
+  document.getElementById('not-signed-in').style.display = 'block';
+} else {
+  document.getElementById('profile-root').style.display = 'grid';
+  document.getElementById('pref-currency').value = user.preferences.accountCurrency || 'USD';
+  document.getElementById('pref-risk').value = user.preferences.riskPercent || 1;
+  document.getElementById('settings-name').value = user.fullName;
+  document.getElementById('settings-email').value = user.email;
+
+  // Tabs
+  document.querySelectorAll('.profile-nav button[data-tab]').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      document.querySelectorAll('.profile-nav button[data-tab]').forEach(b=>b.classList.remove('active'));
+      btn.classList.add('active');
+      document.querySelectorAll('.profile-panel').forEach(p=>p.classList.remove('active'));
+      document.querySelector(`.profile-panel[data-panel="${btn.dataset.tab}"]`).classList.add('active');
+    });
+  });
+
+  document.getElementById('save-prefs').addEventListener('click', ()=>{
+    MFKAuth.updatePreferences({
+      accountCurrency: document.getElementById('pref-currency').value,
+      riskPercent: MFK.toNumberOrNull(document.getElementById('pref-risk').value) || 1,
+    });
+  });
+
+  document.getElementById('signout-btn').addEventListener('click', ()=>{
+    MFKAuth.signOut();
+    window.location.href = '../../index.html';
+  });
+
+  // Favorites
+  const addSelect = document.getElementById('add-fav-pair');
+  MFK.PAIRS.forEach(p=>{
+    const opt = document.createElement('option');
+    opt.value = p.symbol; opt.textContent = p.symbol;
+    addSelect.appendChild(opt);
+  });
+  function renderFavorites(){
+    const list = document.getElementById('fav-pairs-list');
+    const favs = (MFKAuth.currentUser().favoritePairs || []);
+    list.innerHTML = favs.length
+      ? favs.map(p=>`<span class="favorite-chip">${p} <button data-pair="${p}">×</button></span>`).join('')
+      : '<p style="font-size:13px;color:var(--slate-light);">No favorites yet.</p>';
+    list.querySelectorAll('button[data-pair]').forEach(btn=>{
+      btn.addEventListener('click', ()=>{
+        MFKAuth.toggleFavoritePair(btn.dataset.pair);
+        renderFavorites();
+      });
+    });
+  }
+  addSelect.addEventListener('change', ()=>{
+    if(addSelect.value){ MFKAuth.toggleFavoritePair(addSelect.value); addSelect.value=''; renderFavorites(); }
+  });
+  renderFavorites();
+}
+</script>
+</body>
+</html>

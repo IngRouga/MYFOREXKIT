@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Risk Calculator — MyForexKit</title>
+<meta name="description" content="Calculate the dollar amount you're risking per trade and your remaining account balance if the stop loss is hit.">
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../css/styles.css">
+</head>
+<body>
+<div id="mfk-header"></div>
+
+<section class="tool-page-hero">
+  <div class="container">
+    <p class="breadcrumb"><a href="../../index.html" data-i18n="breadcrumb_home">Home</a> / <a href="../index.html" data-i18n="breadcrumb_tools">Tools</a> / <span data-i18n="risk_title">Risk Calculator</span></p>
+    <h1 data-i18n="risk_title">Risk Calculator</h1>
+    <p data-i18n="risk_desc">Know exactly how much money you're risking before entering a trade.</p>
+  </div>
+</section>
+
+<section>
+  <div class="container tool-layout">
+    <div class="tool-card-panel">
+      <form id="calc-form" novalidate>
+        <div class="field">
+          <label for="balance" data-i18n="field_balance">Account balance</label>
+          <input type="number" id="balance" inputmode="decimal" value="100000" min="0" step="any">
+          <div class="field-error" id="err-balance"></div>
+        </div>
+        <div class="field">
+          <label for="riskPercent" data-i18n="field_risk">Risk percentage</label>
+          <input type="number" id="riskPercent" inputmode="decimal" value="0.5" min="0" max="100" step="any">
+          <div class="quick-risk" id="quick-risk">
+            <button type="button" data-val="0.25">0.25%</button>
+            <button type="button" data-val="0.5" class="active">0.5%</button>
+            <button type="button" data-val="1">1%</button>
+            <button type="button" data-val="2">2%</button>
+          </div>
+          <div class="field-error" id="err-riskPercent"></div>
+        </div>
+        <div class="tool-actions">
+          <button type="button" class="btn-reset" id="reset-btn" data-i18n="btn_reset">Reset</button>
+          <button type="submit" class="btn-calc" data-i18n="btn_calculate">Calculate</button>
+        </div>
+      </form>
+    </div>
+
+    <div class="results-panel">
+      <h3 data-i18n="result_title">Result</h3>
+      <div id="results-body">
+        <p class="result-empty" data-i18n="result_empty">Enter your account details and press Calculate.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div id="mfk-footer"></div>
+<script src="../../js/calculations.js"></script>
+<script src="../../js/i18n.js"></script>
+<script src="../../js/auth.js"></script>
+<script src="../../js/components.js"></script>
+<script>
+MFKComponents.mount("../../");
+
+const form = document.getElementById('calc-form');
+const resultsBody = document.getElementById('results-body');
+const riskInput = document.getElementById('riskPercent');
+const t = (k)=> (window.MFKi18n ? window.MFKi18n.t(k) : k);
+
+document.querySelectorAll('#quick-risk button').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    document.querySelectorAll('#quick-risk button').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    riskInput.value = btn.dataset.val;
+  });
+});
+riskInput.addEventListener('input', ()=>{
+  document.querySelectorAll('#quick-risk button').forEach(b=>{
+    b.classList.toggle('active', b.dataset.val === riskInput.value);
+  });
+});
+
+function clearErrors(){
+  document.querySelectorAll('.field-error').forEach(e=>{e.textContent='';e.classList.remove('show');});
+  document.querySelectorAll('.field').forEach(f=>f.classList.remove('invalid'));
+}
+function showFieldError(id, key){
+  const el = document.getElementById('err-'+id);
+  if(el){ el.textContent = t(key); el.classList.add('show'); }
+  document.getElementById(id).closest('.field').classList.add('invalid');
+}
+function fmtMoney(n){ return new Intl.NumberFormat('en-US',{style:'currency',currency:'USD',maximumFractionDigits:2}).format(n); }
+
+form.addEventListener('submit', function(e){
+  e.preventDefault();
+  clearErrors();
+  const balance = MFK.toNumberOrNull(document.getElementById('balance').value);
+  const riskPercent = MFK.toNumberOrNull(riskInput.value);
+
+  let hasError = false;
+  if(balance===null || balance<=0){ showFieldError('balance','err_balance'); hasError=true; }
+  if(riskPercent===null || riskPercent<=0 || riskPercent>100){ showFieldError('riskPercent','err_risk'); hasError=true; }
+  if(hasError){ resultsBody.innerHTML = `<p class="result-empty">${t('err_fixfields')}</p>`; return; }
+
+  const result = MFK.computeRisk({ accountBalance: balance, riskPercent });
+  if(!result.ok){ resultsBody.innerHTML = `<p class="result-empty">${t('err_fixfields')}</p>`; return; }
+
+  const meterPct = Math.min(100, (result.riskPercent / 5) * 100); // meter scaled 0-5% for visual range
+  resultsBody.innerHTML = `
+    <div class="result-highlight">
+      <div class="l">${t('risk_result_atrisk')}</div>
+      <div class="v">${fmtMoney(result.riskAmount)}</div>
+    </div>
+    <div class="result-row"><span class="l">${t('risk_result_after')}</span><span class="v">${fmtMoney(result.remainingBalance)}</span></div>
+    <div class="result-row"><span class="l">${t('risk_result_remaining')}</span><span class="v">${result.remainingPercent}%</span></div>
+    <div class="risk-meter">
+      <div class="risk-meter-bar"><div class="fill" style="width:${meterPct}%"></div></div>
+      <div class="risk-meter-labels"><span>${t('risk_meter_safe')}</span><span>${t('risk_meter_high')}</span></div>
+    </div>
+  `;
+});
+
+document.getElementById('reset-btn').addEventListener('click', function(){
+  document.getElementById('balance').value = '100000';
+  riskInput.value = '0.5';
+  document.querySelectorAll('#quick-risk button').forEach(b=>b.classList.toggle('active', b.dataset.val==='0.5'));
+  clearErrors();
+  resultsBody.innerHTML = `<p class="result-empty">${t('result_empty')}</p>`;
+});
+</script>
+</body>
+</html>

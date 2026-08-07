@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Create Account — MyForexKit</title>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../css/styles.css">
+</head>
+<body>
+<div id="mfk-header"></div>
+
+<div class="auth-wrap">
+  <div class="auth-card">
+    <h1 data-i18n="auth_create_title">Create your account</h1>
+    <p class="sub" data-i18n="auth_create_sub">Optional — all tools work without an account.</p>
+    <p class="auth-note" data-i18n="auth_note">Accounts are optional — every calculator and the sessions dashboard work without signing in.</p>
+
+    <form id="create-form" novalidate>
+      <div class="field">
+        <label for="fullName" data-i18n="field_name">Full name</label>
+        <input type="text" id="fullName" required>
+        <div class="field-error" id="err-fullName"></div>
+      </div>
+      <div class="field">
+        <label for="email" data-i18n="field_email">Email</label>
+        <input type="email" id="email" required>
+        <div class="field-error" id="err-email"></div>
+      </div>
+      <div class="field">
+        <label for="password" data-i18n="field_password">Password</label>
+        <input type="password" id="password" required minlength="8">
+        <div class="field-error" id="err-password"></div>
+      </div>
+      <button type="submit" class="btn-calc" data-i18n="auth_create_btn">Create Account</button>
+    </form>
+
+    <div class="auth-divider"></div>
+    <div class="auth-links">
+      <span data-i18n="auth_have_account">Already have an account?</span>
+      <a href="../sign-in/index.html" data-i18n="nav_signin">Sign In</a>
+    </div>
+  </div>
+</div>
+
+<div id="mfk-footer"></div>
+<script src="../../js/i18n.js"></script>
+<script src="../../js/auth.js"></script>
+<script src="../../js/components.js"></script>
+<script>
+MFKComponents.mount("../../");
+const t = (k)=> (window.MFKi18n ? window.MFKi18n.t(k) : k);
+
+function setError(id, msg){
+  const el = document.getElementById('err-'+id);
+  el.textContent = msg; el.classList.add('show');
+  document.getElementById(id).closest('.field').classList.add('invalid');
+}
+
+document.getElementById('create-form').addEventListener('submit', function(e){
+  e.preventDefault();
+  document.querySelectorAll('.field-error').forEach(el=>{el.textContent='';el.classList.remove('show');});
+  document.querySelectorAll('.field').forEach(f=>f.classList.remove('invalid'));
+
+  const fullName = document.getElementById('fullName').value.trim();
+  const email = document.getElementById('email').value.trim();
+  const password = document.getElementById('password').value;
+
+  let hasError = false;
+  if(!fullName){ setError('fullName', t('err_fixfields')); hasError=true; }
+  if(!email || !email.includes('@')){ setError('email', t('err_fixfields')); hasError=true; }
+  if(!password || password.length < 8){ setError('password', 'At least 8 characters.'); hasError=true; }
+  if(hasError) return;
+
+  const result = MFKAuth.createAccount({ fullName, email, password });
+  if(!result.ok){
+    if(result.error === 'exists') setError('email', 'An account with this email already exists.');
+    else setError('email', 'Could not create account — check your details.');
+    return;
+  }
+  window.location.href = '../profile/index.html';
+});
+</script>
+</body>
+</html>

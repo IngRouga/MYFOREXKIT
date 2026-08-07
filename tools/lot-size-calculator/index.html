@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lot Size Calculator — MyForexKit</title>
+<meta name="description" content="Calculate the correct forex lot size for your account balance, risk percentage and stop loss distance.">
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../css/styles.css">
+</head>
+<body>
+<div id="mfk-header"></div>
+
+<section class="tool-page-hero">
+  <div class="container">
+    <p class="breadcrumb"><a href="../../index.html" data-i18n="breadcrumb_home">Home</a> / <a href="../index.html" data-i18n="breadcrumb_tools">Tools</a> / <span data-i18n="lot_title">Lot Size Calculator</span></p>
+    <h1 data-i18n="lot_title">Lot Size Calculator</h1>
+    <p data-i18n="lot_desc">Calculate position size based on account balance, risk and stop loss.</p>
+  </div>
+</section>
+
+<section>
+  <div class="container tool-layout">
+    <div class="tool-card-panel">
+      <form id="calc-form" novalidate>
+        <div class="field">
+          <label for="accountCurrency" data-i18n="field_currency">Account currency</label>
+          <select id="accountCurrency">
+            <option value="USD" selected>USD</option>
+            <option value="EUR">EUR</option>
+            <option value="GBP">GBP</option>
+            <option value="JPY">JPY</option>
+            <option value="CHF">CHF</option>
+            <option value="CAD">CAD</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="balance" data-i18n="field_balance">Account balance</label>
+          <input type="number" id="balance" inputmode="decimal" value="10000" min="0" step="any">
+          <div class="field-error" id="err-balance"></div>
+        </div>
+        <div class="field">
+          <label for="riskPercent" data-i18n="field_risk">Risk percentage</label>
+          <input type="number" id="riskPercent" inputmode="decimal" value="1" min="0" max="100" step="any">
+          <div class="field-error" id="err-riskPercent"></div>
+        </div>
+        <div class="field">
+          <label for="pair" data-i18n="field_pair">Currency pair</label>
+          <input type="text" id="pair" list="pair-list" value="EUR/USD" autocomplete="off">
+          <datalist id="pair-list"></datalist>
+          <div class="field-error" id="err-pair"></div>
+        </div>
+        <div class="field">
+          <label for="stopLoss"><span data-i18n="field_stoploss">Stop loss</span> <span class="hint" data-i18n="field_stoploss_hint">in pips</span></label>
+          <input type="number" id="stopLoss" inputmode="decimal" value="25" min="0" step="any">
+          <div class="field-error" id="err-stopLoss"></div>
+        </div>
+        <div class="field" id="rate-field" style="display:none;">
+          <label for="exchangeRate"><span data-i18n="field_rate">Exchange rate</span> <span class="hint" data-i18n="field_rate_hint">needed for this pair</span></label>
+          <input type="number" id="exchangeRate" inputmode="decimal" step="any" placeholder="e.g. 0.0067">
+          <div class="field-error" id="err-exchangeRate"></div>
+        </div>
+        <div class="tool-actions">
+          <button type="button" class="btn-reset" id="reset-btn" data-i18n="btn_reset">Reset</button>
+          <button type="submit" class="btn-calc" data-i18n="btn_calculate">Calculate</button>
+        </div>
+      </form>
+    </div>
+
+    <div class="results-panel">
+      <h3 data-i18n="result_title">Result</h3>
+      <div id="results-body">
+        <p class="result-empty" data-i18n="result_empty">Enter your trade details and press Calculate.</p>
+      </div>
+      <p class="result-note" data-i18n="result_note_lot">Pip values are derived precisely from the currency pair. When the pair's quote currency differs from your account currency, we ask for a current exchange rate rather than guessing one — connect a live FX-rate feed here for fully automatic conversion.</p>
+    </div>
+  </div>
+</section>
+
+<div id="mfk-footer"></div>
+<script src="../../js/calculations.js"></script>
+<script src="../../js/i18n.js"></script>
+<script src="../../js/auth.js"></script>
+<script src="../../js/components.js"></script>
+<script>
+MFKComponents.mount("../../");
+
+const datalist = document.getElementById('pair-list');
+MFK.PAIRS.forEach(p=>{
+  const opt = document.createElement('option');
+  opt.value = p.symbol;
+  datalist.appendChild(opt);
+});
+
+const form = document.getElementById('calc-form');
+const rateField = document.getElementById('rate-field');
+const rateInput = document.getElementById('exchangeRate');
+const resultsBody = document.getElementById('results-body');
+const t = (k)=> (window.MFKi18n ? window.MFKi18n.t(k) : k);
+
+function clearErrors(){
+  document.querySelectorAll('.field-error').forEach(e=>{e.textContent='';e.classList.remove('show');});
+  document.querySelectorAll('.field').forEach(f=>f.classList.remove('invalid'));
+}
+function showFieldError(id, key){
+  const el = document.getElementById('err-'+id);
+  if(el){ el.textContent = t(key); el.classList.add('show'); }
+  const input = document.getElementById(id);
+  if(input) input.closest('.field').classList.add('invalid');
+}
+function fmtMoney(n, currency){
+  try{ return new Intl.NumberFormat('en-US',{style:'currency',currency:currency||'USD',maximumFractionDigits:2}).format(n); }
+  catch(e){ return '$'+n.toFixed(2); }
+}
+function checkPairNeedsRate(){
+  const pair = document.getElementById('pair').value;
+  const acct = document.getElementById('accountCurrency').value;
+  const p = MFK.findPair(pair);
+  if(!p){ rateField.style.display='none'; return; }
+  rateField.style.display = (p.quote === acct) ? 'none' : 'block';
+}
+document.getElementById('pair').addEventListener('input', checkPairNeedsRate);
+document.getElementById('accountCurrency').addEventListener('change', checkPairNeedsRate);
+checkPairNeedsRate();
+
+form.addEventListener('submit', function(e){
+  e.preventDefault();
+  clearErrors();
+
+  const accountCurrency = document.getElementById('accountCurrency').value;
+  const balance = MFK.toNumberOrNull(document.getElementById('balance').value);
+  const riskPercent = MFK.toNumberOrNull(document.getElementById('riskPercent').value);
+  const stopLoss = MFK.toNumberOrNull(document.getElementById('stopLoss').value);
+  const pair = document.getElementById('pair').value;
+  const rate = MFK.toNumberOrNull(rateInput.value);
+
+  let hasError = false;
+  if(balance===null || balance<=0){ showFieldError('balance','err_balance'); hasError=true; }
+  if(riskPercent===null || riskPercent<=0 || riskPercent>100){ showFieldError('riskPercent','err_risk'); hasError=true; }
+  if(stopLoss===null || stopLoss<=0){ showFieldError('stopLoss','err_stoploss'); hasError=true; }
+  const p = MFK.findPair(pair);
+  if(!p){ showFieldError('pair','err_pair'); hasError=true; }
+
+  if(hasError){ resultsBody.innerHTML = `<p class="result-empty">${t('err_fixfields')}</p>`; return; }
+
+  const pipInfo = MFK.pipValuePerLotInAccountCurrency(pair, accountCurrency, rate);
+  if(pipInfo.needsRate){
+    showFieldError('exchangeRate','err_rate');
+    resultsBody.innerHTML = `<p class="result-empty">${t('err_needsrate')}</p>`;
+    return;
+  }
+  if(pipInfo.value===null){
+    resultsBody.innerHTML = `<p class="result-empty">${t('err_pair')}</p>`;
+    return;
+  }
+
+  const result = MFK.computeLotSize({
+    accountBalance: balance, riskPercent, stopLossPips: stopLoss, pipValuePerLot: pipInfo.value,
+  });
+
+  if(!result.ok){
+    resultsBody.innerHTML = `<p class="result-empty">${t('err_fixfields')}</p>`;
+    return;
+  }
+
+  resultsBody.innerHTML = `
+    <div class="result-highlight">
+      <div class="l">${t('result_lotsize')}</div>
+      <div class="v">${result.positionSizeLots} lots</div>
+    </div>
+    <div class="result-row"><span class="l">${t('result_riskamount')}</span><span class="v">${fmtMoney(result.riskAmount, accountCurrency)}</span></div>
+    <div class="result-row"><span class="l">${t('result_units')}</span><span class="v">${result.units.toLocaleString()}</span></div>
+    <div class="result-row"><span class="l">${t('result_pipvalue')}</span><span class="v">${fmtMoney(result.pipValuePerLot, accountCurrency)}</span></div>
+  `;
+});
+
+document.getElementById('reset-btn').addEventListener('click', function(){
+  document.getElementById('accountCurrency').value = 'USD';
+  document.getElementById('balance').value = '10000';
+  document.getElementById('riskPercent').value = '1';
+  document.getElementById('stopLoss').value = '25';
+  document.getElementById('pair').value = 'EUR/USD';
+  rateInput.value = '';
+  clearErrors();
+  checkPairNeedsRate();
+  resultsBody.innerHTML = `<p class="result-empty">${t('result_empty')}</p>`;
+});
+</script>
+</body>
+</html>

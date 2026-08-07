@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Compare Prop Firms — MyForexKit</title>
+<meta name="description" content="Compare funded trading accounts by account size, challenge type and platform.">
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../css/styles.css">
+</head>
+<body>
+<div id="mfk-header"></div>
+
+<section class="tool-page-hero">
+  <div class="container">
+    <p class="breadcrumb"><a href="../index.html" data-i18n="breadcrumb_home">Home</a> / <span data-i18n="propfirms_eyebrow">Prop Firms</span></p>
+    <span class="eyebrow" data-i18n="propfirms_eyebrow">Prop firms</span>
+    <h1 data-i18n="propfirms_h1">Compare funded trading accounts.</h1>
+    <p data-i18n="propfirms_sub">Filter by account size, challenge type and platform.</p>
+  </div>
+</section>
+
+<section>
+  <div class="container" style="padding:44px 0 96px;">
+    <div class="propfirm-filters">
+      <select id="filter-size">
+        <option value="" data-i18n="filter_size">Account size</option>
+        <option value="10k">$10,000</option>
+        <option value="25k">$25,000</option>
+        <option value="50k">$50,000</option>
+        <option value="100k">$100,000</option>
+        <option value="200k">$200,000</option>
+      </select>
+      <select id="filter-challenge">
+        <option value="" data-i18n="filter_challenge">Challenge type</option>
+        <option value="1step">1-step</option>
+        <option value="2step">2-step</option>
+        <option value="instant">Instant funding</option>
+      </select>
+      <select id="filter-platform">
+        <option value="" data-i18n="filter_platform">Platform</option>
+        <option value="mt4">MetaTrader 4</option>
+        <option value="mt5">MetaTrader 5</option>
+        <option value="ctrader">cTrader</option>
+      </select>
+    </div>
+
+    <div class="empty-state">
+      <div class="icon">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><rect x="3" y="10" width="4" height="10" stroke="#fff" stroke-width="1.8"/><rect x="10" y="5" width="4" height="15" stroke="#fff" stroke-width="1.8"/><rect x="17" y="13" width="4" height="7" stroke="#fff" stroke-width="1.8"/></svg>
+      </div>
+      <h3 data-i18n="propfirms_empty_title">Live comparisons coming soon</h3>
+      <p data-i18n="propfirms_empty_body">We only publish verified, up-to-date prop firm terms — nothing invented. This page will populate once real, current data is connected.</p>
+    </div>
+
+    <p class="affiliate-note" data-i18n="affiliate_note">Some links to prop firms are affiliate links. MyForexKit may earn a commission at no extra cost to you. This never affects our comparisons.</p>
+  </div>
+</section>
+
+<div id="mfk-footer"></div>
+<script src="../js/i18n.js"></script>
+<script src="../js/auth.js"></script>
+<script src="../js/components.js"></script>
+<script>MFKComponents.mount("../");</script>
+</body>
+</html>

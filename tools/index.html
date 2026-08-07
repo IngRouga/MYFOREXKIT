@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tools — MyForexKit</title>
+<meta name="description" content="Free forex tools: lot size calculator, risk calculator, and live trading sessions.">
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../css/styles.css">
+</head>
+<body>
+<div id="mfk-header"></div>
+
+<section class="tool-page-hero">
+  <div class="container">
+    <p class="breadcrumb"><a href="../index.html" data-i18n="breadcrumb_home">Home</a> / <span data-i18n="breadcrumb_tools">Tools</span></p>
+    <span class="eyebrow" data-i18n="tools_eyebrow">Free tools</span>
+    <h1 data-i18n="tools_h2">Essential tools. Nothing you don't need.</h1>
+  </div>
+</section>
+
+<section>
+  <div class="container" style="padding:52px 0 96px;">
+    <div class="tools-grid-3">
+      <div class="tool-feature-card">
+        <div class="icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M4 12h16M4 6h10M4 18h7" stroke="#fff" stroke-width="2" stroke-linecap="round"/></svg></div>
+        <h3 data-i18n="lot_title">Lot Size Calculator</h3>
+        <p data-i18n="lot_desc">Calculate position size based on account balance, risk and stop loss.</p>
+        <a href="lot-size-calculator/index.html" class="btn btn-secondary" data-i18n="lot_cta">Calculate Lot Size</a>
+      </div>
+      <div class="tool-feature-card">
+        <div class="icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="8" stroke="#fff" stroke-width="2"/><path d="M12 8v4l3 3" stroke="#fff" stroke-width="2" stroke-linecap="round"/></svg></div>
+        <h3 data-i18n="risk_title">Risk Calculator</h3>
+        <p data-i18n="risk_desc">Know exactly how much money you're risking before entering a trade.</p>
+        <a href="risk-calculator/index.html" class="btn btn-secondary" data-i18n="risk_cta">Calculate Risk</a>
+      </div>
+      <div class="tool-feature-card">
+        <div class="icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="#fff" stroke-width="2"/><path d="M12 7v5l4 2" stroke="#fff" stroke-width="2" stroke-linecap="round"/></svg></div>
+        <h3 data-i18n="sessions_title">Trading Sessions</h3>
+        <p data-i18n="sessions_desc">See which major forex sessions are open in real time.</p>
+        <a href="trading-sessions/index.html" class="btn btn-secondary" data-i18n="sessions_cta">View Sessions</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div id="mfk-footer"></div>
+<script src="../js/i18n.js"></script>
+<script src="../js/auth.js"></script>
+<script src="../js/components.js"></script>
+<script>MFKComponents.mount("../");</script>
+</body>
+</html>

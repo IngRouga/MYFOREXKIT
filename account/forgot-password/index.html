@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Reset Password — MyForexKit</title>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../css/styles.css">
+</head>
+<body>
+<div id="mfk-header"></div>
+
+<div class="auth-wrap">
+  <div class="auth-card">
+    <h1 data-i18n="auth_forgot_title">Reset your password</h1>
+    <p class="sub" data-i18n="auth_forgot_sub">We'll send you a reset link.</p>
+
+    <p class="auth-success" id="success-msg" data-i18n="auth_forgot_sub"></p>
+
+    <form id="forgot-form" novalidate>
+      <div class="field">
+        <label for="email" data-i18n="field_email">Email</label>
+        <input type="email" id="email" required>
+        <div class="field-error" id="err-email"></div>
+      </div>
+      <button type="submit" class="btn-calc" data-i18n="auth_forgot_btn">Send Reset Link</button>
+    </form>
+
+    <div class="auth-links">
+      <a href="../sign-in/index.html" data-i18n="auth_back_signin">Back to sign in</a>
+    </div>
+  </div>
+</div>
+
+<div id="mfk-footer"></div>
+<script src="../../js/i18n.js"></script>
+<script src="../../js/auth.js"></script>
+<script src="../../js/components.js"></script>
+<script>
+MFKComponents.mount("../../");
+const t = (k)=> (window.MFKi18n ? window.MFKi18n.t(k) : k);
+
+document.getElementById('forgot-form').addEventListener('submit', function(e){
+  e.preventDefault();
+  const email = document.getElementById('email').value.trim();
+  const errEl = document.getElementById('err-email');
+  errEl.textContent=''; errEl.classList.remove('show');
+  document.getElementById('email').closest('.field').classList.remove('invalid');
+
+  if(!email || !email.includes('@')){
+    errEl.textContent = t('err_fixfields'); errEl.classList.add('show');
+    document.getElementById('email').closest('.field').classList.add('invalid');
+    return;
+  }
+
+  MFKAuth.requestPasswordReset(email);
+  const successEl = document.getElementById('success-msg');
+  successEl.textContent = "If that email is registered, you'll receive a reset link shortly.";
+  successEl.classList.add('show');
+  document.getElementById('forgot-form').reset();
+});
+</script>
+</body>
+</html>
